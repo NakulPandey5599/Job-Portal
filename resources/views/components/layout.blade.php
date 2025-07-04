@@ -30,7 +30,20 @@
     <body class="mb-48">
         <nav class="flex justify-between items-center mb-4">
             <a href="/"><img class="w-24" src="images/logo.png" alt="" class="logo" /></a>
+            @auth
             <ul class="flex space-x-6 mr-6 text-lg">
+                 <span class ="font-bold uppercase">
+                    Welcome {{ auth()->user()->name }}
+                 </span>
+                <li>
+                    <a href="/listings/manage" class="hover:text-laravel"><i class="fa-solid fa-gear"></i>
+                        Manage listings</a>
+                </li>
+                            <form class="inline" method="POST" action="/logout">
+                                @csrf
+                                <button type="sumit"> <i class="fa-solid fa-door-closed">Logout</i></button>
+                            </form>
+            @else
                 <li>
                     <a href="/register" class="hover:text-laravel"><i class="fa-solid fa-user-plus"></i>
                         Register</a>
@@ -40,6 +53,7 @@
                         Login</a>
                 </li>
             </ul>       
+            @endauth
         </nav>  
         <main>
             {{ $slot }}
