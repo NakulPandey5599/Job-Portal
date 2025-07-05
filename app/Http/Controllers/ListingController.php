@@ -34,8 +34,11 @@ class ListingController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
+    public function store(Request $request, Listing $listing)
+    {   //make sure logged in user is ower
+        if ($listing->user_id != auth()->id()) {
+            abort(403, 'Unathorized Action');
+        }
 
         $formFields = $request->validate([
             'title' => 'required',
@@ -64,12 +67,12 @@ class ListingController extends Controller
     }
 
     //Update Edit Form
-    public function update(Request $request ,Listing $listing)
+    public function update(Request $request, Listing $listing)
     {
 
         $formFields = $request->validate([
             'title' => 'required',
-            'company' => ['required', ],
+            'company' => ['required',],
             'location' => 'required',
             'website' => 'required',
             'email' => ['required', 'email'],
@@ -86,15 +89,22 @@ class ListingController extends Controller
 
         return back()->with('message', 'listing updated succesfully!');
     }
-       //deldete listing 
-       public function destroy(Listing $listing ){
-        $listing->delete();
-    return redirect('/')->with('message','listing delete Succesfully');     }
+    //deldete listing 
+    public function destroy(Listing $listing)
+    {
 
-// Manage Listings
-    public function manage() {
-        return view('listings.manage', ['listings' => auth()->user()->listings()->get()]);
+        //make sure logged in user is ower
+        if ($listing->user_id != auth()->id()) {
+            abort(403, 'Unathorized Action');
+        }
+
+        $listing->delete();
+        return redirect('/')->with('message', 'listing delete Succesfully');
     }
 
+    // Manage Listings
+    public function manage()
+    {
+        return view('listings.manage', ['listings' => auth()->user()->listings()->get()]);
+    }
 }
-
