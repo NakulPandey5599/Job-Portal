@@ -14,7 +14,7 @@ class ListingController extends Controller
         return view(
             'listings.index',
             [
-                'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(4)
+                'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(8)
             ]
         );
     }
@@ -34,15 +34,12 @@ class ListingController extends Controller
     }
 
 
-    public function store(Request $request, Listing $listing)
+    public function store(Request $request)
     {   //make sure logged in user is ower
-        if ($listing->user_id != auth()->id()) {
-            abort(403, 'Unathorized Action');
-        }
 
         $formFields = $request->validate([
             'title' => 'required',
-            'company' => ['required', Rule::unique('listings', 'company')],
+            'company' => ['required', ],
             'location' => 'required',
             'website' => 'required',
             'email' => ['required', 'email'],
@@ -55,6 +52,8 @@ class ListingController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
+        $formFields['user_id'] = auth()->id();
+        // dd($formFields);
         Listing::create($formFields);
 
         return redirect('/')->with('message', 'listing created succesfully!');
@@ -85,6 +84,8 @@ class ListingController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
+        $formFields['user_id'] = auth()->id();
+
         $listing->update($formFields);
 
         return back()->with('message', 'listing updated succesfully!');
@@ -107,4 +108,8 @@ class ListingController extends Controller
     {
         return view('listings.manage', ['listings' => auth()->user()->listings()->get()]);
     }
+
+    // function search(Request $request){
+        
+    // }
 }

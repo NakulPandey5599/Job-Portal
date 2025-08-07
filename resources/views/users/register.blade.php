@@ -49,6 +49,30 @@
             </div>
 
             <div class="mb-6">
+                <label class="inline-block text-lg mb-2">Register as</label>
+                <div class="flex items-center space-x-4 mt-2">
+                    <label class="inline-flex items-center">
+                        <input type="radio" class="form-radio" name="role" value="recruiter" {{ old('role') == 'recruiter' ? 'checked' : '' }}>
+                        <span class="ml-2">Recruiter</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" class="form-radio" name="role" value="applicant" {{ old('role') == 'applicant' ? 'checked' : '' }}>
+                        <span class="ml-2">Applicant</span>
+                    </label>
+                </div>
+                @error('role')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+
+
+
+
+
+
+
+            <div class="mb-6">
                 <button type="submit" class="bg-laravel text-white rounded py-2 px-4 hover:bg-black">
                     Sign Up
                 </button>

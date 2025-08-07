@@ -18,13 +18,17 @@ public function store(Request $request){
     $formFields = $request->validate([
         'name' => ['required', 'min:3'],
         'email' => ['required', 'email', Rule::unique('users', 'email')],
-        'password' => 'required|confirmed |min:6'
+        'password' => 'required|confirmed |min:6',
+        'role' => 'required'
     ]);
 
     // hash password
     $formFields['password'] = bcrypt($formFields['password']);
 
+    $formFields['role'] = $request->role == 'recruiter' ? 0 : 1;
+    // dd($formFields);
     //create user
+    // dd($formFields);
     $user = User::create($formFields);
 
     auth()->login($user);
@@ -36,8 +40,8 @@ public function store(Request $request){
 
 public function logout(Request $request){
     auth()->logout();
-    $request->session->invalidate();
-    $request->session->regenerateToken();
+    // $request->session->invalidate();
+    // $request->session->regenerateToken();
     return redirect('/')->with('message', 'you have been logout');
 }
 
@@ -49,11 +53,11 @@ public function login(){
 
 //Authentication User
 
- public function authenticate(Request $request){
-    $formFields = $request->validate([
-        'email' =>['required','email'],
-        'password' =>'rquired'
-    ]);
+ public function authenticate(Request $request) {
+        $formFields = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => 'required'
+        ]);
 
     if(auth()->attempt($formFields)){
         $request->session()->regenerate();

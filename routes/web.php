@@ -24,43 +24,24 @@ use Illuminate\Auth\Events\Login;
 // Route::get('/suraj', function () {
 //     return view('welcome'); 
 // });
-Route::get('/',[ListingController::class, 'index']);
-
-//show create form
-Route::get('/listings/create',[ListingController::class,'create'])->middleware('auth');
-
-//store listing data
-Route::post('/listings',[ListingController::class,'store'])->name('listingCreate')->middleware('auth');
-
-//single listing 
+Route::get('/',[ListingController::class, 'index'])->name('home');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/listings/create',[ListingController::class,'create'])->name('newJobPost');
+    Route::post('/listings',[ListingController::class,'store'])->name('listingCreate');
+    Route::get('/listings/{listing}/edit',[ListingController::class,'edit']);
+    Route::put('/listings/{listing}',[ListingController::class,'update']);
+    Route::delete('/listings/{listing}',[ListingController::class,'destroy']);
+    Route::get('/listings/manage',[ListingController::class,'manage']);
+    Route::post('/logout',[UserController::class ,'logout']);
+});
+// Route::post('/listing/search', [ListingController::class , 'search'])->name('search');
+Route::post('/users',[UserController::class ,'store']);
 Route::get('/listings/{listing}',[ListingController::class,'show']);
 
-// show edit form
-Route::get('/listings/{listing}/edit',[ListingController::class,'edit'])->middleware('auth');
-
-// show update form
-Route::put('/listings/{listing}',[ListingController::class,'update'])->middleware('auth');
-
-// delete form
-Route::delete('/listings/{listing}',[ListingController::class,'destroy'])->middleware('auth');
-
-Route::get('/listings/manage',[ListingController::class,'manage'])->middleware('auth');
-
-
-
-//show register/create from
-Route::get('/register',[UserController::class ,'create'])->middleware('guest');
-
-Route::post('/users',[UserController::class ,'store']);
-
-//logout 
-Route::post('/logout',[UserController::class ,'logout'])->middleware('auth');
-
-// show login form 
-
-Route::get('/login',[UserController::class ,'login'])->middleware('guest');
-
- //log in 
+Route::middleware(['guest'])->group( function (){
+    Route::get('/register',[UserController::class ,'create'])->middleware('guest');
+    Route::get('/login',[UserController::class ,'login'])->middleware('guest');
+    Route::post('/users/authenticate',[UserController::class ,'authenticate']);
+});
 
  
-Route::post('/login/authenticate',[UserController::class ,'login']);
